@@ -1,6 +1,6 @@
 # AdaMerging
 
-A repository of paper about **'[AdaMerging: Adaptive Model Merging for Multi-Task Learning](https://arxiv.org/abs/)'**.
+A repository of **'[AdaMerging: Adaptive Model Merging for Multi-Task Learning](https://arxiv.org/abs/)'**.
 
 
 ## Abstract
