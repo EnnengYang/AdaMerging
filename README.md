@@ -31,24 +31,25 @@ The Google Drive folder is: [task_vectors_checkpoints](https://drive.google.com/
 
 ## Code
 
-> cd src
+First enter the root directory of the source code.
+> cd root_path/src/
 
-Task Atithmetic
+Run Task Atithmetic [paper](https://arxiv.org/abs/2212.04089)
 > python main_task_arithmetic.py
 
-TIES-Merging
+Run TIES-MERGING [paper](https://arxiv.org/abs/2306.01708)
 > python main_ties_merging.py
 
-Task-aware AdaMerging
+Run Task-aware AdaMerging (Ours)
 > python main_task_aware_adamerging.py
 
-Task-aware AdaMerging++
+Run Task-aware AdaMerging++ (Ours)
 > python main_task_aware_adamergingpp.py
 
-Layer-aware AdaMerging
+Run Layer-aware AdaMerging (Ours)
 > python main_layer_aware_adamerging.py
 
-Layer-aware AdaMerging++
+Run Layer-aware AdaMerging++ (Ours)
 > python main_layer_aware_adamergingpp.py
 
 ## Acknowledgement
