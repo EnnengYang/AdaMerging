@@ -1,11 +1,13 @@
 import os
-os.environ["CUDA_VISIBLE_DEVICES"] = "3"
+os.environ["CUDA_VISIBLE_DEVICES"] = "0"
 
 import time
 import sys
 import tqdm
-sys.path.append('/home/taskarithmetic/')
+sys.path.append('/root/taskarithmetic')
 
+import torch
+from task_vectors import TaskVector
 from eval import eval_single_dataset, eval_single_dataset_head, eval_single_dataset_preprocess_head
 from args import parse_arguments
 
@@ -26,47 +28,19 @@ def create_log_dir(path, filename='log.txt'):
 # Config
 exam_datasets = ['SUN397', 'Cars', 'RESISC45', 'EuroSAT', 'SVHN', 'GTSRB', 'MNIST', 'DTD'] # SUN397 | Cars | RESISC45 | EuroSAT | SVHN | GTSRB | MNIST | DTD
 model = 'ViT-B-32'
+source_root_path = '/root'
 args = parse_arguments()
-args.data_location = '/home/taskarithmetic/data'
+args.data_location = source_root_path+'/dataset'
 args.model = model
-args.save = '/home/taskarithmetic/checkpoints/' + model
-args.logs_path = '/home/taskarithmetic/logs/' + model
-pretrained_checkpoint = '/home/taskarithmetic/checkpoints/'+model+'/zeroshot.pt'
+args.save = source_root_path+'/checkpoint/' + model
+args.logs_path = '/root/taskarithmetic/src/logs/' + model
+pretrained_checkpoint = source_root_path+'/checkpoint/'+model+'/zeroshot.pt'
 
 str_time_ = time.strftime('%Y%m%d_%H%M%S', time.localtime(time.time()))
-log = create_log_dir(args.logs_path+'/trainable/', 'log_{}_Layer_Aware_AdaMergingPP.txt'.format(str_time_))
+log = create_log_dir(args.logs_path+'/trainable/', 'log_{}_Task_wise_AdaMerging.txt'.format(str_time_))
 args.log = log
 
-# TIES Merging example
-from ties_merging_utils import *
-
-ft_checks = [torch.load('/home/taskarithmetic/checkpoints/'+model+'/'+dataset_name+'/finetuned.pt').state_dict() for dataset_name in exam_datasets]
-ptm_check = torch.load(pretrained_checkpoint).state_dict()
-
-check_parameterNamesMatch(ft_checks + [ptm_check])
-
-remove_keys = []
-print(f"Flattening out Checkpoints")
-flat_ft = torch.vstack([state_dict_to_vector(check, remove_keys) for check in ft_checks])
-flat_ptm = state_dict_to_vector(ptm_check, remove_keys)
-
-tv_flat_checks = flat_ft - flat_ptm
-
-assert check_state_dicts_equal(vector_to_state_dict(flat_ptm, ptm_check, remove_keys), ptm_check)
-assert all([check_state_dicts_equal(vector_to_state_dict(flat_ft[i], ptm_check, remove_keys), ft_checks[i])for i in range(len(ft_checks))])
-
-
-K = 20
-merge_func = "dis-sum"
-
-selected_entries, merged_tv = ties_merging_split(tv_flat_checks, reset_thresh=K, merge_func=merge_func,)
-
-ties_task_vectors = []
-for vector_ in selected_entries:
-    t_state_dict = vector_to_state_dict(vector_, ptm_check, remove_keys=remove_keys)
-    ref_model = torch.load(pretrained_checkpoint)
-    ref_model.load_state_dict(t_state_dict, strict=False)
-    ties_task_vectors.append(ref_model.state_dict())
+task_vectors = [TaskVector(pretrained_checkpoint, source_root_path+'/checkpoint/'+model+'/'+dataset_name+'/finetuned.pt') for dataset_name in exam_datasets]
 
 def del_attr(obj, names):
     if len(names) == 1:
@@ -114,9 +88,9 @@ class AdaMerging(torch.nn.Module):
         self.paramslist = paramslist
         self.model = model
         self.names = names
-        self.pretrain_lambdas = torch.ones(len(paramslist[0]), 1)
+        self.pretrain_lambdas = torch.ones(1, 1)
         prior = 0.3
-        rlambdas = torch.ones(len(paramslist[0]), len(paramslist)-1) * prior  # (1 * tasks)
+        rlambdas = torch.ones(1, len(paramslist)-1) * prior  # (1 * tasks)
         self.lambdas_raw = torch.nn.Parameter(rlambdas)
 
         self.classifier = []
@@ -141,14 +115,14 @@ class AdaMerging(torch.nn.Module):
 
     def get_image_encoder(self):
         alph = self.lambdas()
-        params = tuple(sum(tuple(pi * lambdasi for pi, lambdasi in zip(p, alph[j].cpu()))) for j, p in enumerate(zip(*self.paramslist)))
+        params = tuple(sum(tuple(pi * lambdasi for pi, lambdasi in zip(p, alph[0].cpu()))) for j, p in enumerate(zip(*self.paramslist)))
         params = tuple(p.cuda(0) for p in params)
         load_weights(self.model, self.names, params)
         return self.model
 
     def forward(self, inp, dataset_name):
         alph = self.lambdas()
-        params = tuple(sum(tuple(pi * lambdasi for pi, lambdasi in zip(p, alph[j].cpu()))) for j, p in enumerate(zip(*self.paramslist)))
+        params = tuple(sum(tuple(pi * lambdasi for pi, lambdasi in zip(p, alph[0].cpu()))) for j, p in enumerate(zip(*self.paramslist)))
 
         params = tuple(p.cuda(0) for p in params)
         load_weights(self.model, self.names, params)
@@ -173,7 +147,7 @@ _, names = make_functional(model)
 
 paramslist = []
 paramslist += [tuple(v.detach().requires_grad_().cpu() for _, v in pretrained_model_dic.items())] # pretrain
-paramslist += [tuple(v.detach().requires_grad_().cpu() for _, v in tv.items())  for i, tv in enumerate(ties_task_vectors)] # task vectors
+paramslist += [tuple(v.detach().requires_grad_().cpu() for _, v in tv.vector.items())  for i, tv in enumerate(task_vectors)] # task vectors
 torch.cuda.empty_cache()
 adamerging_mtl_model = AdaMerging(paramslist, model, names, exam_datasets)
 
@@ -220,9 +194,7 @@ for epoch in range(epochs):
     losses.backward()
     optimizer.step()
 
-    print(list(adamerging_mtl_model.lambdas().data))
-
-    if ((epoch+1) % 20) == 0:
+    if ((epoch+1) % 10) == 0:
         log.info(str(list(adamerging_mtl_model.lambdas().data)))
 
         # Evaluate
@@ -234,4 +206,3 @@ for epoch in range(epochs):
             Total_ACC += metrics['top1']
             log.info('Eval: Epoch: ' + str(epoch) + ' dataset: ' + str(dataset_name) + ' ACC: ' + str(metrics['top1']))
         log.info('Eval: Epoch: ' + str(epoch) + ' Avg ACC:' + str(Total_ACC / len(exam_datasets)) + '\n')
-

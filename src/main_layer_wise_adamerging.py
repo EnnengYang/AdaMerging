@@ -1,16 +1,15 @@
 import os
-os.environ["CUDA_VISIBLE_DEVICES"] = "0"
+os.environ["CUDA_VISIBLE_DEVICES"] = "3"
 
 import time
 import sys
 import tqdm
-sys.path.append('/root/taskarithmetic')
+sys.path.append('/home/taskarithmetic/')
 
 import torch
 from task_vectors import TaskVector
 from eval import eval_single_dataset, eval_single_dataset_head, eval_single_dataset_preprocess_head
 from args import parse_arguments
-
 def create_log_dir(path, filename='log.txt'):
     import logging
     if not os.path.exists(path):
@@ -28,19 +27,18 @@ def create_log_dir(path, filename='log.txt'):
 # Config
 exam_datasets = ['SUN397', 'Cars', 'RESISC45', 'EuroSAT', 'SVHN', 'GTSRB', 'MNIST', 'DTD'] # SUN397 | Cars | RESISC45 | EuroSAT | SVHN | GTSRB | MNIST | DTD
 model = 'ViT-B-32'
-source_root_path = '/root'
 args = parse_arguments()
-args.data_location = source_root_path+'/dataset'
-args.model = model 
-args.save = source_root_path+'/checkpoint/' + model
-args.logs_path = '/root/taskarithmetic/src/logs/' + model
-pretrained_checkpoint = source_root_path+'/checkpoint/'+model+'/zeroshot.pt'
+args.data_location = '/home/taskarithmetic/data'
+args.model = model
+args.save = '/home/taskarithmetic/checkpoints/' + model
+args.logs_path = '/home/taskarithmetic/logs/' + model
+pretrained_checkpoint = '/home/taskarithmetic/checkpoints/'+model+'/zeroshot.pt'
 
 str_time_ = time.strftime('%Y%m%d_%H%M%S', time.localtime(time.time()))
-log = create_log_dir(args.logs_path+'/trainable/', 'log_{}_Task_Aware_AdaMerging.txt'.format(str_time_))
+log = create_log_dir(args.logs_path+'/trainable/', 'log_{}_Layer_wise_AdaMerging.txt'.format(str_time_))
 args.log = log
 
-task_vectors = [TaskVector(pretrained_checkpoint, source_root_path+'/checkpoint/'+model+'/'+dataset_name+'/finetuned.pt') for dataset_name in exam_datasets]
+task_vectors = [TaskVector(pretrained_checkpoint, '/home/taskarithmetic/checkpoints/'+model+'/'+dataset_name+'/finetuned.pt') for dataset_name in exam_datasets]
 
 def del_attr(obj, names):
     if len(names) == 1:
@@ -56,7 +54,6 @@ def set_attr(obj, names, val):
 
 def make_functional(mod):
     orig_params = tuple(mod.parameters())
-    # Remove all the parameters in the model
     names = []
     for name, p in list(mod.named_parameters()):
         del_attr(mod, name.split("."))
@@ -66,7 +63,6 @@ def make_functional(mod):
 def load_weights(mod, names, params):
     for name, p in zip(names, params):
         set_attr(mod, name.split("."), p)
-
 
 class ModelWrapper(torch.nn.Module):
     def __init__(self, model, initial_weights=None):
@@ -88,9 +84,9 @@ class AdaMerging(torch.nn.Module):
         self.paramslist = paramslist
         self.model = model
         self.names = names
-        self.pretrain_lambdas = torch.ones(1, 1)
+        self.pretrain_lambdas = torch.ones(len(paramslist[0]), 1)
         prior = 0.3
-        rlambdas = torch.ones(1, len(paramslist)-1) * prior  # (1 * tasks)
+        rlambdas = torch.ones(len(paramslist[0]), len(paramslist)-1) * prior  # (1 * tasks)
         self.lambdas_raw = torch.nn.Parameter(rlambdas)
 
         self.classifier = []
@@ -115,14 +111,14 @@ class AdaMerging(torch.nn.Module):
 
     def get_image_encoder(self):
         alph = self.lambdas()
-        params = tuple(sum(tuple(pi * lambdasi for pi, lambdasi in zip(p, alph[0].cpu()))) for j, p in enumerate(zip(*self.paramslist)))
+        params = tuple(sum(tuple(pi * lambdasi for pi, lambdasi in zip(p, alph[j].cpu()))) for j, p in enumerate(zip(*self.paramslist)))
         params = tuple(p.cuda(0) for p in params)
         load_weights(self.model, self.names, params)
         return self.model
 
     def forward(self, inp, dataset_name):
         alph = self.lambdas()
-        params = tuple(sum(tuple(pi * lambdasi for pi, lambdasi in zip(p, alph[0].cpu()))) for j, p in enumerate(zip(*self.paramslist)))
+        params = tuple(sum(tuple(pi * lambdasi for pi, lambdasi in zip(p, alph[j].cpu()))) for j, p in enumerate(zip(*self.paramslist)))
 
         params = tuple(p.cuda(0) for p in params)
         load_weights(self.model, self.names, params)
@@ -131,7 +127,6 @@ class AdaMerging(torch.nn.Module):
         layer_name = 'classifier_{}'.format(dataset_name)
         classification_head = getattr(self, layer_name)
         out = classification_head(feature)
-
         return out
 
 def softmax_entropy(x):
@@ -194,6 +189,8 @@ for epoch in range(epochs):
     losses.backward()
     optimizer.step()
 
+    print(list(adamerging_mtl_model.lambdas().data))
+
     if ((epoch+1) % 10) == 0:
         log.info(str(list(adamerging_mtl_model.lambdas().data)))
 
@@ -206,4 +203,3 @@ for epoch in range(epochs):
             Total_ACC += metrics['top1']
             log.info('Eval: Epoch: ' + str(epoch) + ' dataset: ' + str(dataset_name) + ' ACC: ' + str(metrics['top1']))
         log.info('Eval: Epoch: ' + str(epoch) + ' Avg ACC:' + str(Total_ACC / len(exam_datasets)) + '\n')
-

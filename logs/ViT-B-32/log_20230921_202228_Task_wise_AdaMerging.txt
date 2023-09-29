@@ -547,4 +547,3 @@ Eval: Epoch: 499 dataset: GTSRB ACC: 0.8448931116389549
 Eval: Epoch: 499 dataset: MNIST ACC: 0.9244
 Eval: Epoch: 499 dataset: DTD ACC: 0.44840425531914896
 Eval: Epoch: 499 Avg ACC:0.7109082116678384
-

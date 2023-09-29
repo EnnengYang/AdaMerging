@@ -6,10 +6,9 @@ import sys
 import tqdm
 sys.path.append('/home/taskarithmetic/')
 
-import torch
-from task_vectors import TaskVector
 from eval import eval_single_dataset, eval_single_dataset_head, eval_single_dataset_preprocess_head
 from args import parse_arguments
+
 def create_log_dir(path, filename='log.txt'):
     import logging
     if not os.path.exists(path):
@@ -35,10 +34,39 @@ args.logs_path = '/home/taskarithmetic/logs/' + model
 pretrained_checkpoint = '/home/taskarithmetic/checkpoints/'+model+'/zeroshot.pt'
 
 str_time_ = time.strftime('%Y%m%d_%H%M%S', time.localtime(time.time()))
-log = create_log_dir(args.logs_path+'/trainable/', 'log_{}_Layer_Aware_AdaMerging.txt'.format(str_time_))
+log = create_log_dir(args.logs_path+'/trainable/', 'log_{}_Layer_wise_AdaMergingPP.txt'.format(str_time_))
 args.log = log
 
-task_vectors = [TaskVector(pretrained_checkpoint, '/home/taskarithmetic/checkpoints/'+model+'/'+dataset_name+'/finetuned.pt') for dataset_name in exam_datasets]
+# TIES Merging example
+from ties_merging_utils import *
+
+ft_checks = [torch.load('/home/taskarithmetic/checkpoints/'+model+'/'+dataset_name+'/finetuned.pt').state_dict() for dataset_name in exam_datasets]
+ptm_check = torch.load(pretrained_checkpoint).state_dict()
+
+check_parameterNamesMatch(ft_checks + [ptm_check])
+
+remove_keys = []
+print(f"Flattening out Checkpoints")
+flat_ft = torch.vstack([state_dict_to_vector(check, remove_keys) for check in ft_checks])
+flat_ptm = state_dict_to_vector(ptm_check, remove_keys)
+
+tv_flat_checks = flat_ft - flat_ptm
+
+assert check_state_dicts_equal(vector_to_state_dict(flat_ptm, ptm_check, remove_keys), ptm_check)
+assert all([check_state_dicts_equal(vector_to_state_dict(flat_ft[i], ptm_check, remove_keys), ft_checks[i])for i in range(len(ft_checks))])
+
+
+K = 20
+merge_func = "dis-sum"
+
+selected_entries, merged_tv = ties_merging_split(tv_flat_checks, reset_thresh=K, merge_func=merge_func,)
+
+ties_task_vectors = []
+for vector_ in selected_entries:
+    t_state_dict = vector_to_state_dict(vector_, ptm_check, remove_keys=remove_keys)
+    ref_model = torch.load(pretrained_checkpoint)
+    ref_model.load_state_dict(t_state_dict, strict=False)
+    ties_task_vectors.append(ref_model.state_dict())
 
 def del_attr(obj, names):
     if len(names) == 1:
@@ -54,6 +82,7 @@ def set_attr(obj, names, val):
 
 def make_functional(mod):
     orig_params = tuple(mod.parameters())
+    # Remove all the parameters in the model
     names = []
     for name, p in list(mod.named_parameters()):
         del_attr(mod, name.split("."))
@@ -63,6 +92,7 @@ def make_functional(mod):
 def load_weights(mod, names, params):
     for name, p in zip(names, params):
         set_attr(mod, name.split("."), p)
+
 
 class ModelWrapper(torch.nn.Module):
     def __init__(self, model, initial_weights=None):
@@ -127,6 +157,7 @@ class AdaMerging(torch.nn.Module):
         layer_name = 'classifier_{}'.format(dataset_name)
         classification_head = getattr(self, layer_name)
         out = classification_head(feature)
+
         return out
 
 def softmax_entropy(x):
@@ -142,7 +173,7 @@ _, names = make_functional(model)
 
 paramslist = []
 paramslist += [tuple(v.detach().requires_grad_().cpu() for _, v in pretrained_model_dic.items())] # pretrain
-paramslist += [tuple(v.detach().requires_grad_().cpu() for _, v in tv.vector.items())  for i, tv in enumerate(task_vectors)] # task vectors
+paramslist += [tuple(v.detach().requires_grad_().cpu() for _, v in tv.items())  for i, tv in enumerate(ties_task_vectors)] # task vectors
 torch.cuda.empty_cache()
 adamerging_mtl_model = AdaMerging(paramslist, model, names, exam_datasets)
 
@@ -191,7 +222,7 @@ for epoch in range(epochs):
 
     print(list(adamerging_mtl_model.lambdas().data))
 
-    if ((epoch+1) % 10) == 0:
+    if ((epoch+1) % 20) == 0:
         log.info(str(list(adamerging_mtl_model.lambdas().data)))
 
         # Evaluate
@@ -203,4 +234,3 @@ for epoch in range(epochs):
             Total_ACC += metrics['top1']
             log.info('Eval: Epoch: ' + str(epoch) + ' dataset: ' + str(dataset_name) + ' ACC: ' + str(metrics['top1']))
         log.info('Eval: Epoch: ' + str(epoch) + ' Avg ACC:' + str(Total_ACC / len(exam_datasets)) + '\n')
-

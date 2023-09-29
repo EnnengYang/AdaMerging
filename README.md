@@ -40,17 +40,17 @@ Run Task Atithmetic [paper](https://arxiv.org/abs/2212.04089)
 Run TIES-MERGING [paper](https://arxiv.org/abs/2306.01708)
 > python main_ties_merging.py
 
-Run Task-aware AdaMerging (Ours)
-> python main_task_aware_adamerging.py
+Run Task-wise AdaMerging (Ours)
+> python main_task_wise_adamerging.py
 
-Run Task-aware AdaMerging++ (Ours)
-> python main_task_aware_adamergingpp.py
+Run Task-wise AdaMerging++ (Ours)
+> python main_task_wise_adamergingpp.py
 
-Run Layer-aware AdaMerging (Ours)
-> python main_layer_aware_adamerging.py
+Run Layer-wise AdaMerging (Ours)
+> python main_layer_wise_adamerging.py
 
-Run Layer-aware AdaMerging++ (Ours)
-> python main_layer_aware_adamergingpp.py
+Run Layer-wise AdaMerging++ (Ours)
+> python main_layer_wise_adamergingpp.py
 
 ## Acknowledgement
 Our implementation references the code below, thanks to them.

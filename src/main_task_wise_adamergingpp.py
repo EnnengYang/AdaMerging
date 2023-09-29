@@ -34,7 +34,7 @@ args.logs_path = '/home/taskarithmetic/logs/' + model
 pretrained_checkpoint = '/home/taskarithmetic/checkpoints/'+model+'/zeroshot.pt'
 
 str_time_ = time.strftime('%Y%m%d_%H%M%S', time.localtime(time.time()))
-log = create_log_dir(args.logs_path+'/trainable/', 'log_{}_Task_Aware_AdaMergingPP.txt'.format(str_time_))
+log = create_log_dir(args.logs_path+'/trainable/', 'log_{}_Task_wise_AdaMergingPP.txt'.format(str_time_))
 args.log = log
 
 from ties_merging_utils import *
@@ -234,4 +234,3 @@ for epoch in range(epochs):
             Total_ACC += metrics['top1']
             log.info('Eval: Epoch: ' + str(epoch) + ' dataset: ' + str(dataset_name) + ' ACC: ' + str(metrics['top1']))
         log.info('Eval: Epoch: ' + str(epoch) + ' Avg ACC:' + str(Total_ACC / len(exam_datasets)) + '\n')
-
