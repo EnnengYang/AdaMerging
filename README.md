@@ -1,6 +1,6 @@
 # AdaMerging
 
-A repository of papers about **'[AdaMerging: Adaptive Model Merging for Multi-Task Learning](https://arxiv.org/abs/)'**.
+A repository of paper about **'[AdaMerging: Adaptive Model Merging for Multi-Task Learning](https://arxiv.org/abs/)'**.
 
 
 ## Abstract
@@ -33,25 +33,25 @@ The Google Drive folder is: [task_vectors_checkpoints](https://drive.google.com/
 
 > cd src
 
-- Task Atithmetic
+Task Atithmetic
 > python main_task_arithmetic.py
 
-- TIES-Merging
+TIES-Merging
 > python main_ties_merging.py
 
-- Task-aware AdaMerging
+Task-aware AdaMerging
 > python main_task_aware_adamerging.py
 
-- Task-aware AdaMerging++
+Task-aware AdaMerging++
 > python main_task_aware_adamergingpp.py
 
-- Layer-aware AdaMerging
+Layer-aware AdaMerging
 > python main_layer_aware_adamerging.py
 
-- Layer-aware AdaMerging++
+Layer-aware AdaMerging++
 > python main_layer_aware_adamergingpp.py
 
 ## Acknowledgement
-Our code references the following code, thanks them.
+Our implementation references the code below, thanks to them.
 
-[Task Arithmetic](https://github.com/mlfoundations/task_vectors); [TIES-MERGING](https://github.com/prateeky2806/ties-merging/tree/main); [Model Soups](https://github.com/mlfoundations/model-soups)
+[Task Arithmetic](https://github.com/mlfoundations/task_vectors), [TIES-MERGING](https://github.com/prateeky2806/ties-merging/tree/main), [Model Soups](https://github.com/mlfoundations/model-soups)

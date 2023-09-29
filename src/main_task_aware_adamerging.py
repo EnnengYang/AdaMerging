@@ -28,7 +28,7 @@ def create_log_dir(path, filename='log.txt'):
 # Config
 exam_datasets = ['SUN397', 'Cars', 'RESISC45', 'EuroSAT', 'SVHN', 'GTSRB', 'MNIST', 'DTD'] # SUN397 | Cars | RESISC45 | EuroSAT | SVHN | GTSRB | MNIST | DTD
 model = 'ViT-B-32'
-source_root_path = '/root/autodl-tmp'
+source_root_path = '/root'
 args = parse_arguments()
 args.data_location = source_root_path+'/dataset'
 args.model = model 
