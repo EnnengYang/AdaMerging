@@ -23,7 +23,6 @@ def create_log_dir(path, filename='log.txt'):
     logger.addHandler(ch)
     return logger
 
-# Config
 exam_datasets = ['SUN397', 'Cars', 'RESISC45', 'EuroSAT', 'SVHN', 'GTSRB', 'MNIST', 'DTD'] # SUN397 | Cars | RESISC45 | EuroSAT | SVHN | GTSRB | MNIST | DTD
 model = 'ViT-B-32'
 args = parse_arguments()
@@ -67,7 +66,6 @@ for vector_ in selected_entries:
     ref_model.load_state_dict(t_state_dict, strict=False)
     ties_task_vectors.append(ref_model.state_dict())
 
-# Utilities to make nn.Module functional
 def del_attr(obj, names):
     if len(names) == 1:
         delattr(obj, names[0])
@@ -99,7 +97,6 @@ class ModelWrapper(torch.nn.Module):
         super(ModelWrapper, self).__init__()
         self.model = model
 
-        # Note: modified. Get rid of the language part.
         if hasattr(self.model, 'transformer'):
             delattr(self.model, 'transformer')
 
@@ -161,7 +158,6 @@ class AdaMerging(torch.nn.Module):
         return out
 
 def softmax_entropy(x):
-    """Entropy of softmax distribution from logits."""
     return -(x.softmax(1) * x.log_softmax(1)).sum(1)
 
 pretrained_model = torch.load(pretrained_checkpoint)
@@ -188,7 +184,6 @@ optimizer = torch.optim.Adam(adamerging_mtl_model.collect_trainable_params(), lr
 from datasets.registry import get_dataset
 from datasets.common import get_dataloader, maybe_dictionarize, get_dataloader_shuffle
 
-# Evaluate
 Total_ACC = 0.
 for dataset_name in exam_datasets:
     image_encoder = adamerging_mtl_model.get_image_encoder()
@@ -225,7 +220,6 @@ for epoch in range(epochs):
     if ((epoch+1) % 10) == 0:
         log.info(str(list(adamerging_mtl_model.lambdas().data)))
 
-        # Evaluate
         Total_ACC = 0.
         for dataset_name in exam_datasets:
             image_encoder = adamerging_mtl_model.get_image_encoder()

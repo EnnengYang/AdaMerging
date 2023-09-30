@@ -26,7 +26,6 @@ def create_log_dir(path, filename='log.txt'):
     logger.addHandler(ch)
     return logger
 
-# Config
 exam_datasets = ['SUN397', 'Cars', 'RESISC45', 'EuroSAT', 'SVHN', 'GTSRB', 'MNIST', 'DTD'] # SUN397 | Cars | RESISC45 | EuroSAT | SVHN | GTSRB | MNIST | DTD
 model = 'ViT-B-32'
 args = parse_arguments()
@@ -50,7 +49,6 @@ scaling_coef_ = 0.3
 image_encoder = task_vector_sum.apply_to(pretrained_checkpoint, scaling_coef=scaling_coef_)
 log.info('*'*20 + 'scaling_coef:' + str(scaling_coef_) + '*'*20)
 
-# Evaluate
 accs = []
 for dataset in exam_datasets:
     metrics = eval_single_dataset(image_encoder, dataset, args)

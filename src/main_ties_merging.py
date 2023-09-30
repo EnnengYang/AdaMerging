@@ -22,7 +22,6 @@ def create_log_dir(path, filename='log.txt'):
     logger.addHandler(ch)
     return logger
 
-# Config
 exam_datasets = ['SUN397', 'Cars', 'RESISC45', 'EuroSAT', 'SVHN', 'GTSRB', 'MNIST', 'DTD'] # SUN397 | Cars | RESISC45 | EuroSAT | SVHN | GTSRB | MNIST | DTD
 model = 'ViT-B-32'
 args = parse_arguments()
