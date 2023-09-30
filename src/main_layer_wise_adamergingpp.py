@@ -34,7 +34,7 @@ args.logs_path = '/home/taskarithmetic/logs/' + model
 pretrained_checkpoint = '/home/taskarithmetic/checkpoints/'+model+'/zeroshot.pt'
 
 str_time_ = time.strftime('%Y%m%d_%H%M%S', time.localtime(time.time()))
-log = create_log_dir(args.logs_path+'/trainable/', 'log_{}_Layer_wise_AdaMergingPP.txt'.format(str_time_))
+log = create_log_dir(args.logs_path, 'log_{}_Layer_wise_AdaMergingPP.txt'.format(str_time_))
 args.log = log
 
 # TIES Merging example
@@ -213,7 +213,7 @@ for epoch in range(epochs):
             loss = softmax_entropy(outputs).mean(0)
             losses += loss
 
-            if i > 0:
+            if i > 0: # Execute only one step
                 break
 
     optimizer.zero_grad()

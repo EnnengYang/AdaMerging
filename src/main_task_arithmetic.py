@@ -37,7 +37,7 @@ args.logs_path = '/home/taskarithmetic/logs/' + model
 pretrained_checkpoint = '/home/taskarithmetic/checkpoints/'+model+'/zeroshot.pt'
 
 str_time_ = time.strftime('%Y%m%d_%H%M%S', time.localtime(time.time()))
-log = create_log_dir(args.logs_path, 'log_{}.txt'.format(str_time_))
+log = create_log_dir(args.logs_path, 'log_{}_task_arithmetic.txt'.format(str_time_))
 
 task_vectors = [
     TaskVector(pretrained_checkpoint, '/home/taskarithmetic/checkpoints/'+model+'/'+dataset_name+'/finetuned.pt') for dataset_name in exam_datasets
@@ -57,4 +57,3 @@ for dataset in exam_datasets:
     log.info(str(dataset) + ':' + str(metrics.get('top1')*100)+'%')
     accs.append(metrics.get('top1')*100)
 log.info('Avg ACC:' + str(np.mean(accs)) + '%')
-

@@ -37,7 +37,7 @@ args.logs_path = '/root/taskarithmetic/src/logs/' + model
 pretrained_checkpoint = source_root_path+'/checkpoint/'+model+'/zeroshot.pt'
 
 str_time_ = time.strftime('%Y%m%d_%H%M%S', time.localtime(time.time()))
-log = create_log_dir(args.logs_path+'/trainable/', 'log_{}_Task_wise_AdaMerging.txt'.format(str_time_))
+log = create_log_dir(args.logs_path, 'log_{}_Task_wise_AdaMerging.txt'.format(str_time_))
 args.log = log
 
 task_vectors = [TaskVector(pretrained_checkpoint, source_root_path+'/checkpoint/'+model+'/'+dataset_name+'/finetuned.pt') for dataset_name in exam_datasets]
@@ -187,7 +187,7 @@ for epoch in range(epochs):
             loss = softmax_entropy(outputs).mean(0)
             losses += loss
 
-            if i > 0:
+            if i > 0: # Execute only one step
                 break
 
     optimizer.zero_grad()
