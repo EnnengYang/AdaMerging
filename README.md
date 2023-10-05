@@ -17,7 +17,7 @@ If you find our paper or this resource helpful, please consider cite:
 @article{AdaMerging_Arxiv_2023,
   title={AdaMerging: Adaptive Model Merging for Multi-Task Learning},
   author={Enneng Yang and Zhenyi Wang and Li Shen and Shiwei Liu and Guibing Guo and Xingwei Wang and Dacheng Tao},
-  journal={arXiv preprint arXiv:},
+  journal={arXiv preprint arXiv:2310.02575},
   year={2023}
 }
 ```
