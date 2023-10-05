@@ -1,6 +1,6 @@
 # AdaMerging
 
-A repository of **'[AdaMerging: Adaptive Model Merging for Multi-Task Learning](https://arxiv.org/abs/)'**.
+A repository of **'[AdaMerging: Adaptive Model Merging for Multi-Task Learning](https://arxiv.org/abs/2310.02575)'**.
 
 
 ## Abstract
@@ -40,16 +40,16 @@ Run Task Atithmetic [paper](https://arxiv.org/abs/2212.04089)
 Run TIES-MERGING [paper](https://arxiv.org/abs/2306.01708)
 > python main_ties_merging.py
 
-Run Task-wise AdaMerging (Ours)
+Run Task-wise AdaMerging (Ours) [paper](https://arxiv.org/abs/2310.02575)
 > python main_task_wise_adamerging.py
 
-Run Task-wise AdaMerging++ (Ours)
+Run Task-wise AdaMerging++ (Ours) [paper](https://arxiv.org/abs/2310.02575)
 > python main_task_wise_adamergingpp.py
 
-Run Layer-wise AdaMerging (Ours)
+Run Layer-wise AdaMerging (Ours) [paper](https://arxiv.org/abs/2310.02575)
 > python main_layer_wise_adamerging.py
 
-Run Layer-wise AdaMerging++ (Ours)
+Run Layer-wise AdaMerging++ (Ours) [paper](https://arxiv.org/abs/2310.02575)
 > python main_layer_wise_adamergingpp.py
 
 ## Acknowledgement
