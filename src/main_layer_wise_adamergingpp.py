@@ -216,7 +216,7 @@ for epoch in range(epochs):
 
     print(list(adamerging_mtl_model.lambdas().data))
 
-    if ((epoch+1) % 20) == 0:
+    if ((epoch+1) % 500) == 0:
         log.info(str(list(adamerging_mtl_model.lambdas().data)))
 
         Total_ACC = 0.
