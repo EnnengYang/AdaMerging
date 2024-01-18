@@ -1,6 +1,6 @@
 # AdaMerging
 
-A repository of **'[AdaMerging: Adaptive Model Merging for Multi-Task Learning](https://arxiv.org/abs/2310.02575)'**.
+A repository of **'[AdaMerging: Adaptive Model Merging for Multi-Task Learning](https://arxiv.org/abs/2310.02575). ICLR, 2024.'**.
 
 
 ## Abstract
@@ -14,11 +14,11 @@ A repository of **'[AdaMerging: Adaptive Model Merging for Multi-Task Learning](
 ## Citation
 If you find our paper or this resource helpful, please consider cite:
 ```
-@article{AdaMerging_Arxiv_2023,
+@article{AdaMerging_ICLR_2024,
   title={AdaMerging: Adaptive Model Merging for Multi-Task Learning},
-  author={Enneng Yang and Zhenyi Wang and Li Shen and Shiwei Liu and Guibing Guo and Xingwei Wang and Dacheng Tao},
-  journal={arXiv preprint arXiv:2310.02575},
-  year={2023}
+  author={Yang, Enneng and Wang, Zhenyi and Shen, Li and Liu, Shiwei and Guo, Guibing and Wang, Xingwei and Tao, Dacheng},
+  journal={The Twelfth International Conference on Learning Representations},
+  year={2024}
 }
 ```
 Thanks!
