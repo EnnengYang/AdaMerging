@@ -31,6 +31,10 @@ The Google Drive folder is: [task_vectors_checkpoints](https://drive.google.com/
 
 ## Code
 
+### Train
+
+**If you want to train AdaMerging, run this part of the code. If you want to load the trained merging coefficients directly, refer to the Eval section.**
+
 First enter the root directory of the source code.
 > cd root_path/src/
 
@@ -51,6 +55,24 @@ Run Layer-wise AdaMerging (Ours) [paper](https://arxiv.org/abs/2310.02575)
 
 Run Layer-wise AdaMerging++ (Ours) [paper](https://arxiv.org/abs/2310.02575)
 > python main_layer_wise_adamergingpp.py
+
+### Eval
+Optionally, you can load our trained merging coefficients and place the data in the *merging_cofficient.py* file.
+
+```
+# load
+from merging_cofficient import get_merging_cofficients
+ralpha = get_merging_cofficients(method_name, model_name)  
+self.alpha = torch.Tensor(ralpha)
+
+# wrap
+if self.alpha.size()[0] == 1:# task-wise merging
+    params = tuple(sum(tuple(pi * alphai for pi, alphai in zip(p, self.alpha[0].cpu()))) for j, p in enumerate(zip(*self.paramslist)))
+else: # layer-wise merging
+    params = tuple(sum(tuple(pi * alphai for pi, alphai in zip(p, self.alpha[j].cpu()))) for j, p in enumerate(zip(*self.paramslist)))
+```
+
+
 
 ## Acknowledgement
 Our implementation references the code below, thanks to them.
