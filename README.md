@@ -57,7 +57,7 @@ Run Layer-wise AdaMerging++ (Ours) [paper](https://arxiv.org/abs/2310.02575)
 > python main_layer_wise_adamergingpp.py
 
 ### Eval
-Optionally, you can load our trained merging coefficients and place the data in the *merging_cofficient.py* file.
+Alternatively, you can load our trained merge coefficients, which can be found in the *merging_coefficient.py* file. The general process is as follows:
 
 ```
 # load
