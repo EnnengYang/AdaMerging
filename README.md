@@ -24,6 +24,12 @@ If you find our paper or this resource helpful, please consider cite:
 Thanks!
 
 
+## Datasets
+Refer to dataset processing in the [task_vectors](https://github.com/mlfoundations/task_vectors).
+
+Or you can download the processed data from [Baidu Cloud disk](https://pan.baidu.com/s/1w0Z2UVv3NVmqDhjH8WTOJQ?pwd=kvg6).
+
+
 ## Checkpoints
 
 You can download the fine-tuned checkpoints from the [task_vectors#checkpoints](https://github.com/mlfoundations/task_vectors#checkpoints).
@@ -71,10 +77,17 @@ if self.alpha.size()[0] == 1:# task-wise merging
 else: # layer-wise merging
     params = tuple(sum(tuple(pi * alphai for pi, alphai in zip(p, self.alpha[j].cpu()))) for j, p in enumerate(zip(*self.paramslist)))
 ```
+See the code for details: [RepresentationSurgery](https://github.com/EnnengYang/RepresentationSurgery)
 
 
 
 ## Acknowledgement
 Our implementation references the code below, thanks to them.
 
-[Task Arithmetic](https://github.com/mlfoundations/task_vectors), [TIES-MERGING](https://github.com/prateeky2806/ties-merging/tree/main), [Model Soups](https://github.com/mlfoundations/model-soups)
+- Task Arithmetic: https://github.com/mlfoundations/task_vectors
+
+- TIES-MERGING: https://github.com/prateeky2806/ties-merging/tree/main
+
+- Model Soups: https://github.com/mlfoundations/model-soups
+
+<!-- [Task Arithmetic](https://github.com/mlfoundations/task_vectors), [TIES-MERGING](https://github.com/prateeky2806/ties-merging/tree/main), [Model Soups](https://github.com/mlfoundations/model-soups) -->
