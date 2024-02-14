@@ -35,6 +35,8 @@ Or you can download the processed data from [Baidu Cloud disk](https://pan.baidu
 You can download the fine-tuned checkpoints from the [task_vectors#checkpoints](https://github.com/mlfoundations/task_vectors#checkpoints).
 The Google Drive folder is: [task_vectors_checkpoints](https://drive.google.com/drive/folders/1u_Tva6x0p6oxu5Eo0ZZsf-520Cc_3MKw)
 
+*Note: When using torch.load(xxx_checkpoint).state_dict() fails, you can try pickle.load(open(xxx_checkpoint, 'rb')).state_dict().*
+
 ## Code
 
 ### Train
