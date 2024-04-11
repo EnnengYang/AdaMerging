@@ -79,7 +79,7 @@ if self.alpha.size()[0] == 1:# task-wise merging
 else: # layer-wise merging
     params = tuple(sum(tuple(pi * alphai for pi, alphai in zip(p, self.alpha[j].cpu()))) for j, p in enumerate(zip(*self.paramslist)))
 ```
-More details can be found in the following code: [RepresentationSurgery](https://github.com/EnnengYang/RepresentationSurgery)
+More details can be found in the following code: https://github.com/EnnengYang/RepresentationSurgery
 
 
 
