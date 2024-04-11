@@ -52,20 +52,20 @@ Run Task Atithmetic [paper](https://arxiv.org/abs/2212.04089)
 Run TIES-MERGING [paper](https://arxiv.org/abs/2306.01708)
 > python main_ties_merging.py
 
-Run Task-wise AdaMerging (Ours) [paper](https://arxiv.org/abs/2310.02575)
+Run Task-wise AdaMerging (Ours)  
 > python main_task_wise_adamerging.py
 
-Run Task-wise AdaMerging++ (Ours) [paper](https://arxiv.org/abs/2310.02575)
+Run Task-wise AdaMerging++ (Ours)  
 > python main_task_wise_adamergingpp.py
 
-Run Layer-wise AdaMerging (Ours) [paper](https://arxiv.org/abs/2310.02575)
+Run Layer-wise AdaMerging (Ours)  
 > python main_layer_wise_adamerging.py
 
-Run Layer-wise AdaMerging++ (Ours) [paper](https://arxiv.org/abs/2310.02575)
+Run Layer-wise AdaMerging++ (Ours)  
 > python main_layer_wise_adamergingpp.py
 
 ### Eval
-Alternatively, you can load our trained merge coefficients, which can be found in the *merging_coefficient.py* file. The general process is as follows:
+Alternatively, you can load our trained merge coefficients, which can be found in the *[merging_coefficient.py](https://github.com/EnnengYang/AdaMerging/blob/main/src/merging_cofficient.py)* file. The general process is as follows:
 
 ```
 # load
@@ -79,7 +79,7 @@ if self.alpha.size()[0] == 1:# task-wise merging
 else: # layer-wise merging
     params = tuple(sum(tuple(pi * alphai for pi, alphai in zip(p, self.alpha[j].cpu()))) for j, p in enumerate(zip(*self.paramslist)))
 ```
-See the code for details: [RepresentationSurgery](https://github.com/EnnengYang/RepresentationSurgery)
+More details can be found in the following code: [RepresentationSurgery](https://github.com/EnnengYang/RepresentationSurgery)
 
 
 
