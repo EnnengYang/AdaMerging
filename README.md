@@ -91,5 +91,8 @@ Our implementation references the code below, thanks to them.
 - TIES-MERGING: https://github.com/prateeky2806/ties-merging/tree/main
 
 - Model Soups: https://github.com/mlfoundations/model-soups
+  
+- Tent: https://github.com/DequanWang/tent
+
 
 <!-- [Task Arithmetic](https://github.com/mlfoundations/task_vectors), [TIES-MERGING](https://github.com/prateeky2806/ties-merging/tree/main), [Model Soups](https://github.com/mlfoundations/model-soups) -->
