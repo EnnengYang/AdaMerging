@@ -207,7 +207,7 @@ for epoch in range(epochs):
             loss = softmax_entropy(outputs).mean(0)
             losses += loss
 
-            if i > 0: # Execute only one step
+            if i > 0:
                 break
 
     optimizer.zero_grad()
