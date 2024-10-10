@@ -46,7 +46,7 @@ The Google Drive folder is: [task_vectors_checkpoints](https://drive.google.com/
 First enter the root directory of the source code.
 > cd root_path/src/
 
-Run Task Atithmetic [paper](https://arxiv.org/abs/2212.04089)
+Run Task Arithmetic [paper](https://arxiv.org/abs/2212.04089)
 > python main_task_arithmetic.py
 
 Run TIES-MERGING [paper](https://arxiv.org/abs/2306.01708)
@@ -63,6 +63,8 @@ Run Layer-wise AdaMerging (Ours)
 
 Run Layer-wise AdaMerging++ (Ours)  
 > python main_layer_wise_adamergingpp.py
+
+*Note: Due to machine memory limitations, our implementation reloaded the dataset at each step, which resulted in a significant amount of additional time. If your machine has enough memory, you can load all the data before optimizing the merging coefficients, which will speed up the training significantly (i.e., the merging coefficients can be trained in a matter of minutes).*
 
 ### Eval
 Alternatively, you can load our trained merge coefficients, which can be found in the *[merging_coefficient.py](https://github.com/EnnengYang/AdaMerging/blob/main/src/merging_cofficient.py)* file. The general process is as follows:
