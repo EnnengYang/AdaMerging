@@ -38,6 +38,8 @@ The Google Drive folder is: [task_vectors_checkpoints](https://drive.google.com/
 *Note: When using ```torch.load(xxx_checkpoint).state_dict()``` fails, you can try ```pickle.load(open(xxx_checkpoint, 'rb')).state_dict()```.*
 
 ## Code
+> [!IMPORTANT]
+We noticed that our [AdaMerging](https://github.com/tanganke/fusion_bench/tree/main/fusion_bench/method/adamerging) method has been implemented in [FusionBench](https://github.com/tanganke/fusion_bench), a model merging benchmark. Thanks to its excellent memory management, AdaMerging is highly efficient within this framework, with the entire training process taking **only a few minutes**.
 
 ### Train
 
